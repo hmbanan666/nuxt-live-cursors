@@ -15,7 +15,7 @@
         :style="{
           position: 'absolute',
           transition: 'all 150ms ease-out',
-          left: `${cursor.x - scrollX}px`,
+          left: `${cursor.x * viewportWidth}px`,
           top: `${cursor.y - scrollY}px`,
         }"
       >
@@ -75,11 +75,7 @@
       v-if="showProfile"
       data-live-cursors-profile
       :style="{
-        position: 'fixed',
-        bottom: '64px',
-        left: '50%',
-        zIndex: 50,
-        transform: 'translateX(-50%)',
+        ...profilePosition,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -150,11 +146,7 @@
       v-if="onlineCount > 0"
       data-live-cursors-bar
       :style="{
-        position: 'fixed',
-        bottom: '16px',
-        left: '50%',
-        zIndex: 50,
-        transform: 'translateX(-50%)',
+        ...barPosition,
         display: 'flex',
         alignItems: 'center',
         gap: '12px',
@@ -254,11 +246,42 @@ import type { CursorInfo, OnlineUser } from '../composables/useLiveCursors'
 import { useLiveCursors } from '../composables/useLiveCursors'
 import { getLocale } from '../locales'
 
+type Position = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
+
 const props = withDefaults(defineProps<{
   /** Display locale. Built-in: 'en', 'ru'. Default: 'en' */
   locale?: string
+  /** Position of the online bar. Default: 'bottom-center' */
+  position?: Position
 }>(), {
   locale: 'en',
+  position: 'bottom-center',
+})
+
+const barPosition = computed(() => {
+  const [vertical, horizontal] = props.position.split('-')
+  const styles: Record<string, string> = {
+    position: 'fixed',
+    zIndex: '50',
+  }
+  styles[vertical === 'top' ? 'top' : 'bottom'] = '16px'
+  if (horizontal === 'left') styles.left = '16px'
+  else if (horizontal === 'right') styles.right = '16px'
+  else { styles.left = '50%'; styles.transform = 'translateX(-50%)' }
+  return styles
+})
+
+const profilePosition = computed(() => {
+  const [vertical, horizontal] = props.position.split('-')
+  const styles: Record<string, string> = {
+    position: 'fixed',
+    zIndex: '50',
+  }
+  styles[vertical === 'top' ? 'top' : 'bottom'] = '64px'
+  if (horizontal === 'left') styles.left = '16px'
+  else if (horizontal === 'right') styles.right = '16px'
+  else { styles.left = '50%'; styles.transform = 'translateX(-50%)' }
+  return styles
 })
 
 const l = computed(() => getLocale(props.locale))
@@ -278,14 +301,17 @@ function userName(user: OnlineUser) {
   return resolveName(user.nameKey)
 }
 
-const scrollX = ref(0)
 const scrollY = ref(0)
+const viewportWidth = ref(0)
 const showProfile = ref(false)
 
 if (import.meta.client) {
   const onScroll = () => {
-    scrollX.value = window.scrollX
     scrollY.value = window.scrollY
+  }
+
+  const onResize = () => {
+    viewportWidth.value = window.innerWidth
   }
 
   const onClickOutside = (e: MouseEvent) => {
@@ -297,12 +323,15 @@ if (import.meta.client) {
 
   onMounted(() => {
     window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onResize, { passive: true })
     window.addEventListener('click', onClickOutside)
     onScroll()
+    onResize()
   })
 
   onUnmounted(() => {
     window.removeEventListener('scroll', onScroll)
+    window.removeEventListener('resize', onResize)
     window.removeEventListener('click', onClickOutside)
   })
 }
@@ -338,14 +367,17 @@ if (import.meta.client) {
 }
 
 .live-cursor-pop-enter-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: opacity 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .live-cursor-pop-leave-active {
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: opacity 0.2s ease-in, transform 0.2s ease-in;
 }
-.live-cursor-pop-enter-from,
+.live-cursor-pop-enter-from {
+  opacity: 0;
+  transform: translateX(-50%) translateY(12px) scale(0.9);
+}
 .live-cursor-pop-leave-to {
   opacity: 0;
-  transform: translate(-50%, 8px) scale(0.95);
+  transform: translateX(-60%) translateY(6px) scale(0.92);
 }
 </style>

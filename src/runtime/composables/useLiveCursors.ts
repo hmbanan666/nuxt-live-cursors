@@ -3,7 +3,9 @@ import { useRoute, useRuntimeConfig } from '#imports'
 
 export interface CursorInfo {
   id: string
+  /** X position as fraction of viewport width (0-1) */
   x: number
+  /** Y position as absolute page coordinate in pixels */
   y: number
   nameKey: string
   color: string
@@ -36,6 +38,16 @@ export function useLiveCursors() {
   const config = useRuntimeConfig()
   const wsPath = config.public.liveCursors?.wsPath || '/_ws'
   const throttleMs = config.public.liveCursors?.throttleMs || 50
+  const stripPrefixes: string[] = config.public.liveCursors?.stripLocalePrefixes || []
+
+  function normalizePath(path: string): string {
+    if (stripPrefixes.length === 0) return path
+    for (const prefix of stripPrefixes) {
+      if (path === `/${prefix}` || path === `/${prefix}/`) return '/'
+      if (path.startsWith(`/${prefix}/`)) return path.slice(prefix.length + 1)
+    }
+    return path
+  }
 
   function connect() {
     if (import.meta.server) return
@@ -66,8 +78,9 @@ export function useLiveCursors() {
           myAvatar.value = msg.avatar
         }
         else if (msg.type === 'cursors') {
+          const myPage = normalizePath(route.path)
           cursors.value = msg.cursors.filter(
-            (c: CursorInfo) => c.id !== myId.value && c.page === route.path,
+            (c: CursorInfo) => c.id !== myId.value && c.page === myPage,
           )
         }
         else if (msg.type === 'online') {
@@ -105,14 +118,15 @@ export function useLiveCursors() {
     lastSent = now
     ws.send(JSON.stringify({
       type: 'move',
-      x: Math.round(x),
+      x,
       y: Math.round(y),
-      page: route.path,
+      page: normalizePath(route.path),
     }))
   }
 
   function onMouseMove(e: MouseEvent) {
-    sendPosition(e.clientX + window.scrollX, e.clientY + window.scrollY)
+    const xFraction = e.clientX / window.innerWidth
+    sendPosition(xFraction, e.clientY + window.scrollY)
   }
 
   function shuffle() {

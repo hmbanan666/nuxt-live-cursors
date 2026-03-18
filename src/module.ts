@@ -7,6 +7,8 @@ export interface ModuleOptions {
   avatarPath: string
   /** Throttle interval in ms for cursor position updates. Default: 50 */
   throttleMs: number
+  /** Locale prefixes to strip from page paths for cross-locale cursor visibility. E.g. ['en', 'de'] */
+  stripLocalePrefixes: string[]
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -21,6 +23,7 @@ export default defineNuxtModule<ModuleOptions>({
     wsPath: '/_ws',
     avatarPath: '/api/live-cursors-avatar',
     throttleMs: 50,
+    stripLocalePrefixes: [],
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -36,6 +39,7 @@ export default defineNuxtModule<ModuleOptions>({
       wsPath: options.wsPath,
       avatarPath: options.avatarPath,
       throttleMs: options.throttleMs,
+      stripLocalePrefixes: options.stripLocalePrefixes,
     }
 
     // Register server routes
