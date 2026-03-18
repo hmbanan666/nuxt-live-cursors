@@ -1,7 +1,7 @@
 {
   "name": "nuxt-live-cursors",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "packageManager": "pnpm@10.32.1",
   "description": "Real-time live cursors for Nuxt - see other visitors on your site",
   "author": "Nick Kosarev <hmbanan666@hotmail.com>",
