@@ -1,0 +1,28 @@
+export const names: Record<string, string> = {
+  curiousCat: 'Curious Cat',
+  silentFox: 'Silent Fox',
+  bravePanda: 'Brave Panda',
+  luckyOwl: 'Lucky Owl',
+  swiftFalcon: 'Swift Falcon',
+  calmWhale: 'Calm Whale',
+  wildTiger: 'Wild Tiger',
+  shyDeer: 'Shy Deer',
+  boldEagle: 'Bold Eagle',
+  kindBear: 'Kind Bear',
+  smartCrow: 'Smart Crow',
+  freeWolf: 'Free Wolf',
+  warmOtter: 'Warm Otter',
+  coolLynx: 'Cool Lynx',
+  fastHare: 'Fast Hare',
+  wiseTurtle: 'Wise Turtle',
+  deepSquid: 'Deep Squid',
+  loudParrot: 'Loud Parrot',
+  softMoth: 'Soft Moth',
+  brightBee: 'Bright Bee',
+}
+
+export const ui: Record<string, string> = {
+  online: '{count} online',
+  shuffle: 'Shuffle',
+  you: 'This is you',
+}

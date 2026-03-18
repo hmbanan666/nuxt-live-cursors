@@ -1,0 +1,47 @@
+{
+  "name": "nuxt-live-cursors",
+  "version": "0.0.1",
+  "description": "Real-time live cursors for Nuxt - see other visitors on your site",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    }
+  },
+  "main": "./dist/module.mjs",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "nuxt",
+    "nuxt-module",
+    "cursors",
+    "live-cursors",
+    "websocket",
+    "real-time",
+    "multiplayer",
+    "presence"
+  ],
+  "author": "Nick Kosarev <hmbanan666@hotmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hmbanan666/nuxt-live-cursors"
+  },
+  "scripts": {
+    "build": "nuxt-module-build build",
+    "prepack": "nuxt-module-build build",
+    "dev:prepare": "nuxt-module-build prepare"
+  },
+  "dependencies": {
+    "@nextorders/avatar": "^1.0.3",
+    "@nuxt/kit": "^3.21.0"
+  },
+  "devDependencies": {
+    "@nuxt/module-builder": "^1.0.0",
+    "nuxt": "^4.4.2",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.2.6"
+  }
+}
