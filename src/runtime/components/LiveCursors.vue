@@ -247,7 +247,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { CursorInfo, OnlineUser } from '../composables/useLiveCursors'
 import { useLiveCursors } from '../composables/useLiveCursors'
 import { getLocale } from '../locales'
