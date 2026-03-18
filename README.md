@@ -1,5 +1,10 @@
 # nuxt-live-cursors
 
+[![npm version][npm-version-src]][npm-version-href]
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![License][license-src]][license-href]
+[![Nuxt][nuxt-src]][nuxt-href]
+
 Real-time live cursors for Nuxt. Show other visitors on your site with avatars and random nicknames.
 
 Built on Nitro WebSocket - zero external dependencies, no third-party services.
@@ -147,3 +152,16 @@ connect-src 'self' wss: ws:
 ## License
 
 MIT
+
+<!-- Badges -->
+[npm-version-src]: https://img.shields.io/npm/v/nuxt-live-cursors/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-version-href]: https://npmjs.com/package/nuxt-live-cursors
+
+[npm-downloads-src]: https://img.shields.io/npm/dm/nuxt-live-cursors.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-downloads-href]: https://npmjs.com/package/nuxt-live-cursors
+
+[license-src]: https://img.shields.io/github/license/hmbanan666/nuxt-live-cursors.svg?style=flat&colorA=18181B&colorB=28CF8D
+[license-href]: https://github.com/hmbanan666/nuxt-live-cursors/blob/main/LICENSE
+
+[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt
+[nuxt-href]: https://nuxt.com
