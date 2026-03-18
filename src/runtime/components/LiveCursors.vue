@@ -73,6 +73,7 @@
   <Transition name="live-cursor-pop">
     <div
       v-if="showProfile"
+      data-live-cursors-profile
       :style="{
         position: 'fixed',
         bottom: '64px',
@@ -147,6 +148,7 @@
   <Transition name="live-cursor-fade">
     <button
       v-if="onlineCount > 0"
+      data-live-cursors-bar
       :style="{
         position: 'fixed',
         bottom: '16px',
@@ -286,13 +288,22 @@ if (import.meta.client) {
     scrollY.value = window.scrollY
   }
 
+  const onClickOutside = (e: MouseEvent) => {
+    const target = e.target as HTMLElement
+    if (showProfile.value && !target.closest('[data-live-cursors-bar]') && !target.closest('[data-live-cursors-profile]')) {
+      showProfile.value = false
+    }
+  }
+
   onMounted(() => {
     window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('click', onClickOutside)
     onScroll()
   })
 
   onUnmounted(() => {
     window.removeEventListener('scroll', onScroll)
+    window.removeEventListener('click', onClickOutside)
   })
 }
 </script>
