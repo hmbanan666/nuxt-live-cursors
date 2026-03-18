@@ -1,20 +1,14 @@
 {
   "name": "nuxt-live-cursors",
+  "type": "module",
   "version": "0.1.0",
   "description": "Real-time live cursors for Nuxt - see other visitors on your site",
+  "author": "Nick Kosarev <hmbanan666@hotmail.com>",
   "license": "MIT",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/types.d.mts",
-      "import": "./dist/module.mjs"
-    }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hmbanan666/nuxt-live-cursors"
   },
-  "main": "./dist/module.mjs",
-  "files": [
-    "dist",
-    "README.md"
-  ],
   "keywords": [
     "nuxt",
     "nuxt-module",
@@ -25,24 +19,48 @@
     "multiplayer",
     "presence"
   ],
-  "author": "Nick Kosarev <hmbanan666@hotmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/hmbanan666/nuxt-live-cursors"
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    }
   },
+  "main": "./dist/module.mjs",
+  "files": [
+    "README.md",
+    "dist"
+  ],
   "scripts": {
     "build": "nuxt-module-build build",
     "prepack": "nuxt-module-build build",
-    "dev:prepare": "nuxt-module-build prepare"
+    "prepare": "husky",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "release": "bumpp -r"
+  },
+  "nano-staged": {
+    "*.{js,ts,vue}": "eslint --fix"
   },
   "dependencies": {
     "@nextorders/avatar": "^1.0.3",
     "@nuxt/kit": "^3.21.0"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^7.7.3",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@nuxt/module-builder": "^1.0.0",
+    "@playwright/test": "^1.58.2",
+    "bumpp": "^11.0.1",
+    "eslint": "^10.0.3",
+    "husky": "^9.1.7",
+    "nano-staged": "^0.9.0",
     "nuxt": "^4.4.2",
     "typescript": "^5.9.3",
+    "vitest": "^4.1.0",
     "vue-tsc": "^3.2.6"
   }
 }

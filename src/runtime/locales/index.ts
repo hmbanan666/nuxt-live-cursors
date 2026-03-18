@@ -1,11 +1,18 @@
 import { names as enNames, ui as enUi } from './en'
 import { names as ruNames, ui as ruUi } from './ru'
 
-export const locales: Record<string, { names: Record<string, string>, ui: Record<string, string> }> = {
-  en: { names: enNames, ui: enUi },
+interface LocaleData {
+  names: Record<string, string>
+  ui: Record<string, string>
+}
+
+const fallback: LocaleData = { names: enNames, ui: enUi }
+
+export const locales: Record<string, LocaleData> = {
+  en: fallback,
   ru: { names: ruNames, ui: ruUi },
 }
 
-export function getLocale(locale: string) {
-  return locales[locale] || locales.en
+export function getLocale(locale: string): LocaleData {
+  return locales[locale] ?? fallback
 }

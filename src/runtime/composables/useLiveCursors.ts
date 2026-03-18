@@ -1,5 +1,6 @@
-import { onMounted, onUnmounted, ref } from 'vue'
+import type { ModuleOptions } from '../../module'
 import { useRoute, useRuntimeConfig } from '#imports'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 export interface CursorInfo {
   id: string
@@ -32,25 +33,35 @@ export function useLiveCursors() {
 
   let ws: WebSocket | null = null
   let throttleTimer: ReturnType<typeof setTimeout> | null = null
+  let reconnectTimer: ReturnType<typeof setTimeout> | null = null
   let lastSent = 0
 
   const route = useRoute()
   const config = useRuntimeConfig()
-  const wsPath = config.public.liveCursors?.wsPath || '/_ws'
-  const throttleMs = config.public.liveCursors?.throttleMs || 50
-  const stripPrefixes: string[] = config.public.liveCursors?.stripLocalePrefixes || []
+  const liveCursors = (config.public.liveCursors || {}) as Partial<ModuleOptions>
+  const wsPath = liveCursors.wsPath || '/_live-cursors-ws'
+  const throttleMs = liveCursors.throttleMs || 50
+  const stripPrefixes = liveCursors.stripLocalePrefixes || []
 
   function normalizePath(path: string): string {
-    if (stripPrefixes.length === 0) return path
+    if (stripPrefixes.length === 0) {
+      return path
+    }
     for (const prefix of stripPrefixes) {
-      if (path === `/${prefix}` || path === `/${prefix}/`) return '/'
-      if (path.startsWith(`/${prefix}/`)) return path.slice(prefix.length + 1)
+      if (path === `/${prefix}` || path === `/${prefix}/`) {
+        return '/'
+      }
+      if (path.startsWith(`/${prefix}/`)) {
+        return path.slice(prefix.length + 1)
+      }
     }
     return path
   }
 
   function connect() {
-    if (import.meta.server) return
+    if (import.meta.server) {
+      return
+    }
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
     const url = `${protocol}//${window.location.host}${wsPath}`
@@ -71,24 +82,20 @@ export function useLiveCursors() {
           myColor.value = msg.color
           myAvatar.value = msg.avatar
           onlineCount.value = msg.count
-        }
-        else if (msg.type === 'updated') {
+        } else if (msg.type === 'updated') {
           myNameKey.value = msg.nameKey
           myColor.value = msg.color
           myAvatar.value = msg.avatar
-        }
-        else if (msg.type === 'cursors') {
+        } else if (msg.type === 'cursors') {
           const myPage = normalizePath(route.path)
           cursors.value = msg.cursors.filter(
             (c: CursorInfo) => c.id !== myId.value && c.page === myPage,
           )
-        }
-        else if (msg.type === 'online') {
+        } else if (msg.type === 'online') {
           onlineCount.value = msg.count
           onlineUsers.value = msg.users
         }
-      }
-      catch {
+      } catch {
         // ignore
       }
     }
@@ -97,12 +104,14 @@ export function useLiveCursors() {
       isConnected.value = false
       cursors.value = []
       onlineUsers.value = []
-      setTimeout(connect, 3000)
+      reconnectTimer = setTimeout(connect, 3000)
     }
   }
 
   function sendPosition(x: number, y: number) {
-    if (!ws || ws.readyState !== WebSocket.OPEN) return
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      return
+    }
 
     const now = Date.now()
     if (now - lastSent < throttleMs) {
@@ -142,7 +151,12 @@ export function useLiveCursors() {
 
   onUnmounted(() => {
     window.removeEventListener('mousemove', onMouseMove)
-    if (throttleTimer) clearTimeout(throttleTimer)
+    if (throttleTimer) {
+      clearTimeout(throttleTimer)
+    }
+    if (reconnectTimer) {
+      clearTimeout(reconnectTimer)
+    }
     if (ws) {
       ws.onclose = null
       ws.close()

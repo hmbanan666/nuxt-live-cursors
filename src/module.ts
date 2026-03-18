@@ -1,9 +1,9 @@
 import { addComponentsDir, addImportsDir, addServerHandler, createResolver, defineNuxtModule } from '@nuxt/kit'
 
 export interface ModuleOptions {
-  /** WebSocket endpoint path. Default: '/_ws' */
+  /** WebSocket endpoint path. Default: '/_live-cursors-ws' */
   wsPath: string
-  /** Avatar API endpoint path. Default: '/api/live-cursors-avatar' */
+  /** Avatar API endpoint path. Default: '/_live-cursors-avatar' */
   avatarPath: string
   /** Throttle interval in ms for cursor position updates. Default: 50 */
   throttleMs: number
@@ -20,10 +20,10 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   defaults: {
-    wsPath: '/_ws',
-    avatarPath: '/api/live-cursors-avatar',
+    wsPath: '/_live-cursors-ws',
+    avatarPath: '/_live-cursors-avatar',
     throttleMs: 50,
-    stripLocalePrefixes: [],
+    stripLocalePrefixes: [] as string[],
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -40,7 +40,7 @@ export default defineNuxtModule<ModuleOptions>({
       avatarPath: options.avatarPath,
       throttleMs: options.throttleMs,
       stripLocalePrefixes: options.stripLocalePrefixes,
-    }
+    } as ModuleOptions
 
     // Register server routes
     addServerHandler({
@@ -51,7 +51,7 @@ export default defineNuxtModule<ModuleOptions>({
     addServerHandler({
       route: `${options.avatarPath}/:seed`,
       method: 'get',
-      handler: resolve('./runtime/server/api/live-cursors-avatar/[seed].get'),
+      handler: resolve('./runtime/server/routes/avatar/[seed].get'),
     })
 
     // Register composables

@@ -1,5 +1,6 @@
 <template>
   <div
+    data-live-cursors
     :style="{
       pointerEvents: 'none',
       position: 'fixed',
@@ -233,7 +234,7 @@
       </div>
       <span :style="{ fontSize: '12px', color: '#a3a3a3' }">
         <slot name="online-text" :count="onlineCount">
-          {{ labels.online.replace('{count}', String(onlineCount)) }}
+          {{ labels.online?.replace('{count}', String(onlineCount)) }}
         </slot>
       </span>
     </button>
@@ -241,8 +242,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { CursorInfo, OnlineUser } from '../composables/useLiveCursors'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useLiveCursors } from '../composables/useLiveCursors'
 import { getLocale } from '../locales'
 
@@ -265,9 +266,14 @@ const barPosition = computed(() => {
     zIndex: '50',
   }
   styles[vertical === 'top' ? 'top' : 'bottom'] = '16px'
-  if (horizontal === 'left') styles.left = '16px'
-  else if (horizontal === 'right') styles.right = '16px'
-  else { styles.left = '50%'; styles.transform = 'translateX(-50%)' }
+  if (horizontal === 'left') {
+    styles.left = '16px'
+  } else if (horizontal === 'right') {
+    styles.right = '16px'
+  } else {
+    styles.left = '50%'
+    styles.transform = 'translateX(-50%)'
+  }
   return styles
 })
 
@@ -278,9 +284,14 @@ const profilePosition = computed(() => {
     zIndex: '50',
   }
   styles[vertical === 'top' ? 'top' : 'bottom'] = '64px'
-  if (horizontal === 'left') styles.left = '16px'
-  else if (horizontal === 'right') styles.right = '16px'
-  else { styles.left = '50%'; styles.transform = 'translateX(-50%)' }
+  if (horizontal === 'left') {
+    styles.left = '16px'
+  } else if (horizontal === 'right') {
+    styles.right = '16px'
+  } else {
+    styles.left = '50%'
+    styles.transform = 'translateX(-50%)'
+  }
   return styles
 })
 

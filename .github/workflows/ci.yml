@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+      - 'docker/**'
+      - '.github/**'
+      - '!.github/workflows/ci.yml'
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - 'docker/**'
+      - '.github/**'
+      - '!.github/workflows/ci.yml'
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Prepare
+        run: pnpm run prepare
+
+      - name: ESLint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Unit tests
+        run: pnpm run test
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install Playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright deps (cached)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: E2E tests
+        run: pnpm run test:e2e
+
+      - name: Build
+        run: pnpm run build

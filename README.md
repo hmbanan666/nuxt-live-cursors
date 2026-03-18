@@ -80,10 +80,10 @@ Want to add a language? Submit a PR with a new file in `src/runtime/locales/`.
 export default defineNuxtConfig({
   modules: ['nuxt-live-cursors'],
   liveCursors: {
-    // WebSocket endpoint path (default: '/_ws')
-    wsPath: '/_ws',
-    // Avatar API endpoint path (default: '/api/live-cursors-avatar')
-    avatarPath: '/api/live-cursors-avatar',
+    // WebSocket endpoint path (default: '/_live-cursors-ws')
+    wsPath: '/_live-cursors-ws',
+    // Avatar endpoint path (default: '/_live-cursors-avatar')
+    avatarPath: '/_live-cursors-avatar',
     // Throttle interval in ms (default: 50)
     throttleMs: 50,
   },
@@ -96,15 +96,15 @@ Use `useLiveCursors()` for custom implementations:
 
 ```ts
 const {
-  cursors,      // other visitors' cursors on current page
-  onlineUsers,  // all connected visitors
-  onlineCount,  // total count
-  myId,         // your unique ID
-  myNameKey,    // your nickname key (resolve via locales)
-  myColor,      // your cursor color
-  myAvatar,     // your avatar URL
-  isConnected,  // WebSocket connection status
-  shuffle,      // randomize your identity
+  cursors, // other visitors' cursors on current page
+  onlineUsers, // all connected visitors
+  onlineCount, // total count
+  myId, // your unique ID
+  myNameKey, // your nickname key (resolve via locales)
+  myColor, // your cursor color
+  myAvatar, // your avatar URL
+  isConnected, // WebSocket connection status
+  shuffle, // randomize your identity
 } = useLiveCursors()
 ```
 

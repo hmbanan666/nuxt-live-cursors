@@ -1,4 +1,5 @@
 import type { Peer } from 'crossws'
+import { useRuntimeConfig } from '#imports'
 import { defineWebSocketHandler } from 'h3'
 
 interface CursorData {
@@ -34,11 +35,21 @@ function getRandomItem<T>(arr: readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)] as T
 }
 
+function getAvatarPath(): string {
+  try {
+    const config = useRuntimeConfig()
+    const liveCursors = (config.public as Record<string, unknown>).liveCursors as Record<string, unknown> | undefined
+    return (liveCursors?.avatarPath as string) || '/_live-cursors-avatar'
+  } catch {
+    return '/_live-cursors-avatar'
+  }
+}
+
 function generateAvatarUrl(seed: string): string {
   const gender = getRandomItem(genders)
   const emotion = Math.floor(Math.random() * 10) + 1
   const clothing = getRandomItem(clothingColors)
-  return `/api/live-cursors-avatar/${seed}?gender=${gender}&emotion=${emotion}&clothing=${clothing}`
+  return `${getAvatarPath()}/${seed}?gender=${gender}&emotion=${emotion}&clothing=${clothing}`
 }
 
 function broadcastCursors(exclude?: Peer) {
@@ -53,7 +64,7 @@ function broadcastCursors(exclude?: Peer) {
 }
 
 function broadcastOnline() {
-  const users = Array.from(peers.values()).map(p => ({
+  const users = Array.from(peers.values()).map((p) => ({
     id: p.id,
     nameKey: p.nameKey,
     color: p.color,
@@ -63,6 +74,10 @@ function broadcastOnline() {
   for (const p of peers.keys()) {
     p.send(msg)
   }
+}
+
+function isValidPage(page: unknown): page is string {
+  return typeof page === 'string' && page.length <= 2048 && page.startsWith('/')
 }
 
 export default defineWebSocketHandler({
@@ -81,7 +96,7 @@ export default defineWebSocketHandler({
 
     peer.send(JSON.stringify({ type: 'welcome', ...data, count: peers.size }))
 
-    const existingCursors = Array.from(peers.values()).filter(p => p.id !== id)
+    const existingCursors = Array.from(peers.values()).filter((p) => p.id !== id)
     peer.send(JSON.stringify({ type: 'cursors', cursors: existingCursors }))
 
     broadcastOnline()
@@ -89,17 +104,23 @@ export default defineWebSocketHandler({
 
   message(peer, message) {
     const data = peers.get(peer)
-    if (!data) return
+    if (!data) {
+      return
+    }
 
     try {
       const msg = JSON.parse(message.text())
       if (msg.type === 'move') {
-        data.x = msg.x
-        data.y = msg.y
-        data.page = msg.page || '/'
+        const x = Number(msg.x)
+        const y = Number(msg.y)
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          return
+        }
+        data.x = Math.max(0, Math.min(1, x))
+        data.y = Math.max(-1000, Math.min(100000, y))
+        data.page = isValidPage(msg.page) ? msg.page : '/'
         broadcastCursors(peer)
-      }
-      else if (msg.type === 'shuffle') {
+      } else if (msg.type === 'shuffle') {
         data.nameKey = getRandomItem(nameKeys)
         data.color = getRandomItem(colors)
         data.avatar = generateAvatarUrl(crypto.randomUUID().slice(0, 8))
@@ -107,9 +128,8 @@ export default defineWebSocketHandler({
         broadcastCursors()
         broadcastOnline()
       }
-    }
-    catch {
-      // ignore malformed messages
+    } catch {
+      // malformed JSON — skip
     }
   },
 

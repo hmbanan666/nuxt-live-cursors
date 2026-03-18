@@ -4,3 +4,7 @@ dist
 .output
 *.log
 .DS_Store
+test-results
+playwright-report
+playground/.nuxt
+playground/.output
