@@ -1,4 +1,5 @@
 import { createAvatar } from '@nextorders/avatar'
+import { defineEventHandler, getQuery, getRouterParam, setResponseHeader } from 'nitropack/runtime'
 
 const EMOTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
 const CLOTHING = ['amber', 'green', 'blue', 'teal', 'pink', 'violet'] as const
