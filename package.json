@@ -1,6 +1,6 @@
 {
   "name": "nuxt-live-cursors",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Real-time live cursors for Nuxt - see other visitors on your site",
   "license": "MIT",
   "type": "module",
@@ -12,7 +12,8 @@
   },
   "main": "./dist/module.mjs",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "keywords": [
     "nuxt",

@@ -1,5 +1,5 @@
 import type { Peer } from 'crossws'
-import { defineWebSocketHandler } from 'nitropack/runtime'
+import { defineWebSocketHandler } from 'h3'
 
 interface CursorData {
   id: string
