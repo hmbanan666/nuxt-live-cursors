@@ -9,11 +9,12 @@ Real-time live cursors for Nuxt. Show other visitors on your site with avatars a
 
 Built on Nitro WebSocket - zero external dependencies, no third-party services.
 
-<img src="./docs/demo.gif" alt="Live Cursors Demo" width="600" />
+<img src="./docs/demo.gif" alt="Live Cursors Demo" />
 
 ## Features
 
-- Live cursor positions via WebSocket
+- Live cursor positions via WebSocket (syncs on both mouse move and scroll)
+- Hide/show other cursors toggle in profile popover
 - Random SVG avatars (powered by [@nextorders/avatar](https://github.com/nextorders/avatar))
 - Built-in localization (English, Russian) with easy extension via PR
 - Unique colors per visitor
@@ -104,6 +105,7 @@ Use `useLiveCursors()` for custom implementations:
 ```ts
 const {
   cursors, // other visitors' cursors on current page
+  cursorsHidden, // ref<boolean> — toggle to hide/show other cursors
   onlineUsers, // all connected visitors
   onlineCount, // total count
   myId, // your unique ID
