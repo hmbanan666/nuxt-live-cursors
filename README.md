@@ -134,8 +134,11 @@ The `<LiveCursors>` component provides slots for customization:
   </template>
 
   <!-- Customize profile actions -->
-  <template #profile-actions="{ shuffle }">
+  <template #profile-actions="{ shuffle, cursorsHidden, toggleCursors }">
     <button @click="shuffle">Randomize</button>
+    <button @click="toggleCursors">
+      {{ cursorsHidden ? 'Show' : 'Hide' }} cursors
+    </button>
   </template>
 
   <!-- Customize online counter text -->
