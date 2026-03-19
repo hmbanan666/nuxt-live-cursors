@@ -9,6 +9,8 @@ Real-time live cursors for Nuxt. Show other visitors on your site with avatars a
 
 Built on Nitro WebSocket - zero external dependencies, no third-party services.
 
+<img src="./docs/demo.gif" alt="Live Cursors Demo" width="600" />
+
 ## Features
 
 - Live cursor positions via WebSocket

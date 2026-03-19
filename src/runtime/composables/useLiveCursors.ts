@@ -31,10 +31,14 @@ export function useLiveCursors() {
   const onlineCount = ref(0)
   const isConnected = ref(false)
 
+  const cursorsHidden = ref(false)
+
   let ws: WebSocket | null = null
   let throttleTimer: ReturnType<typeof setTimeout> | null = null
   let reconnectTimer: ReturnType<typeof setTimeout> | null = null
   let lastSent = 0
+  let lastClientX = 0
+  let lastClientY = 0
 
   const route = useRoute()
   const config = useRuntimeConfig()
@@ -134,8 +138,18 @@ export function useLiveCursors() {
   }
 
   function onMouseMove(e: MouseEvent) {
+    lastClientX = e.clientX
+    lastClientY = e.clientY
     const xFraction = e.clientX / window.innerWidth
     sendPosition(xFraction, e.clientY + window.scrollY)
+  }
+
+  function onScroll() {
+    if (lastClientX === 0 && lastClientY === 0) {
+      return
+    }
+    const xFraction = lastClientX / window.innerWidth
+    sendPosition(xFraction, lastClientY + window.scrollY)
   }
 
   function shuffle() {
@@ -147,10 +161,12 @@ export function useLiveCursors() {
   onMounted(() => {
     connect()
     window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('scroll', onScroll, { passive: true })
   })
 
   onUnmounted(() => {
     window.removeEventListener('mousemove', onMouseMove)
+    window.removeEventListener('scroll', onScroll)
     if (throttleTimer) {
       clearTimeout(throttleTimer)
     }
@@ -165,6 +181,7 @@ export function useLiveCursors() {
 
   return {
     cursors,
+    cursorsHidden,
     onlineUsers,
     myId,
     myNameKey,

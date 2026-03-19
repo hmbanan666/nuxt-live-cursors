@@ -24,5 +24,7 @@ export const names: Record<string, string> = {
 export const ui: Record<string, string> = {
   online: '{count} online',
   shuffle: 'Shuffle',
+  hideCursors: 'Hide cursors',
+  showCursors: 'Show cursors',
   you: 'This is you',
 }

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test('renders LiveCursors component', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('h1')).toHaveText('Playground')
+  await expect(page.locator('h1')).toHaveText('Live Cursors')
   // LiveCursors component is mounted
   await expect(page.locator('[data-live-cursors]')).toBeAttached()
 })

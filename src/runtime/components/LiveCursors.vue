@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="!cursorsHidden"
     data-live-cursors
     :style="{
       pointerEvents: 'none',
@@ -135,6 +136,24 @@
             @click="shuffle"
           >
             {{ labels.shuffle }}
+          </button>
+          <button
+            :style="{
+              borderRadius: '8px',
+              backgroundColor: cursorsHidden ? '#3b2a1a' : '#262626',
+              padding: '6px 12px',
+              fontSize: '12px',
+              fontWeight: 500,
+              color: cursorsHidden ? '#f59e0b' : '#d4d4d4',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'background-color 150ms',
+            }"
+            @mouseover="($event.target as HTMLElement).style.backgroundColor = cursorsHidden ? '#4a3520' : '#404040'"
+            @mouseleave="($event.target as HTMLElement).style.backgroundColor = cursorsHidden ? '#3b2a1a' : '#262626'"
+            @click="cursorsHidden = !cursorsHidden"
+          >
+            {{ cursorsHidden ? labels.showCursors : labels.hideCursors }}
           </button>
         </slot>
       </div>
@@ -298,7 +317,7 @@ const profilePosition = computed(() => {
 const l = computed(() => getLocale(props.locale))
 const labels = computed(() => l.value.ui)
 
-const { cursors, onlineUsers, onlineCount, myNameKey, myColor, myAvatar, shuffle } = useLiveCursors()
+const { cursors, cursorsHidden, onlineUsers, onlineCount, myNameKey, myColor, myAvatar, shuffle } = useLiveCursors()
 
 function resolveName(nameKey: string) {
   return l.value.names[nameKey] || nameKey
