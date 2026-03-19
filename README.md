@@ -59,6 +59,16 @@ Add the component to your `app.vue`:
 
 That's it. Cursors will appear automatically with English nicknames.
 
+### Position
+
+Control where the online bar appears:
+
+```vue
+<LiveCursors position="bottom-right" />
+```
+
+Options: `top-left`, `top-center`, `top-right`, `bottom-left`, `bottom-center` (default), `bottom-right`.
+
 ## Localization
 
 Pass the `locale` prop to switch language:
@@ -133,11 +143,11 @@ The `<LiveCursors>` component provides slots for customization:
     Custom Name
   </template>
 
-  <!-- Customize profile actions -->
-  <template #profile-actions="{ shuffle, cursorsHidden, toggleCursors }">
-    <button @click="shuffle">Randomize</button>
+  <!-- Customize profile actions (full layout control) -->
+  <template #profile-actions="{ shuffle, cursorsHidden, toggleCursors, labels }">
+    <button @click="shuffle">{{ labels.shuffle }}</button>
     <button @click="toggleCursors">
-      {{ cursorsHidden ? 'Show' : 'Hide' }} cursors
+      {{ cursorsHidden ? labels.showCursors : labels.hideCursors }}
     </button>
   </template>
 

@@ -38,6 +38,7 @@ let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 let lastSent = 0
 let lastClientX = 0
 let lastClientY = 0
+let mountCount = 0
 
 export function useLiveCursors() {
   const route = useRoute()
@@ -163,24 +164,30 @@ export function useLiveCursors() {
   }
 
   onMounted(() => {
-    connect()
-    window.addEventListener('mousemove', onMouseMove)
-    window.addEventListener('scroll', onScroll, { passive: true })
+    mountCount++
+    if (mountCount === 1) {
+      connect()
+      window.addEventListener('mousemove', onMouseMove)
+      window.addEventListener('scroll', onScroll, { passive: true })
+    }
   })
 
   onUnmounted(() => {
-    window.removeEventListener('mousemove', onMouseMove)
-    window.removeEventListener('scroll', onScroll)
-    if (throttleTimer) {
-      clearTimeout(throttleTimer)
-    }
-    if (reconnectTimer) {
-      clearTimeout(reconnectTimer)
-    }
-    if (ws) {
-      ws.onclose = null
-      ws.close()
-      ws = null
+    mountCount--
+    if (mountCount === 0) {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('scroll', onScroll)
+      if (throttleTimer) {
+        clearTimeout(throttleTimer)
+      }
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer)
+      }
+      if (ws) {
+        ws.onclose = null
+        ws.close()
+        ws = null
+      }
     }
   })
 

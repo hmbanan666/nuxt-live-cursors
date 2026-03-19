@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="!cursorsHidden"
+    v-show="!cursorsHidden"
     data-live-cursors
     :style="{
       pointerEvents: 'none',
@@ -117,13 +117,14 @@
       <p :style="{ fontSize: '12px', color: '#737373', margin: 0 }">
         {{ labels.you }}
       </p>
-      <div :style="{ display: 'flex', alignItems: 'center', gap: '8px' }">
-        <slot
-          name="profile-actions"
-          :shuffle="shuffle"
-          :cursors-hidden="cursorsHidden"
-          :toggle-cursors="() => cursorsHidden = !cursorsHidden"
-        >
+      <slot
+        name="profile-actions"
+        :shuffle="shuffle"
+        :cursors-hidden="cursorsHidden"
+        :toggle-cursors="() => cursorsHidden = !cursorsHidden"
+        :labels="labels"
+      >
+        <div :style="{ display: 'flex', alignItems: 'center', gap: '8px' }">
           <button
             :style="{
               borderRadius: '8px',
@@ -160,8 +161,8 @@
           >
             {{ cursorsHidden ? labels.showCursors : labels.hideCursors }}
           </button>
-        </slot>
-      </div>
+        </div>
+      </slot>
     </div>
   </Transition>
 
@@ -409,10 +410,10 @@ if (import.meta.client) {
 }
 .live-cursor-pop-enter-from {
   opacity: 0;
-  transform: translateX(-50%) translateY(12px) scale(0.9);
+  transform: translateY(12px) scale(0.9);
 }
 .live-cursor-pop-leave-to {
   opacity: 0;
-  transform: translateX(-60%) translateY(6px) scale(0.92);
+  transform: translateY(6px) scale(0.92);
 }
 </style>
