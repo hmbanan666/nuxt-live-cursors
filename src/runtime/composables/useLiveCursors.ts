@@ -21,25 +21,25 @@ export interface OnlineUser {
   avatar: string
 }
 
+// Shared singleton state
+const cursors = ref<CursorInfo[]>([])
+const cursorsHidden = ref(false)
+const onlineUsers = ref<OnlineUser[]>([])
+const myId = ref('')
+const myNameKey = ref('')
+const myColor = ref('')
+const myAvatar = ref('')
+const onlineCount = ref(0)
+const isConnected = ref(false)
+
+let ws: WebSocket | null = null
+let throttleTimer: ReturnType<typeof setTimeout> | null = null
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null
+let lastSent = 0
+let lastClientX = 0
+let lastClientY = 0
+
 export function useLiveCursors() {
-  const cursors = ref<CursorInfo[]>([])
-  const onlineUsers = ref<OnlineUser[]>([])
-  const myId = ref('')
-  const myNameKey = ref('')
-  const myColor = ref('')
-  const myAvatar = ref('')
-  const onlineCount = ref(0)
-  const isConnected = ref(false)
-
-  const cursorsHidden = ref(false)
-
-  let ws: WebSocket | null = null
-  let throttleTimer: ReturnType<typeof setTimeout> | null = null
-  let reconnectTimer: ReturnType<typeof setTimeout> | null = null
-  let lastSent = 0
-  let lastClientX = 0
-  let lastClientY = 0
-
   const route = useRoute()
   const config = useRuntimeConfig()
   const liveCursors = (config.public.liveCursors || {}) as Partial<ModuleOptions>
@@ -64,6 +64,10 @@ export function useLiveCursors() {
 
   function connect() {
     if (import.meta.server) {
+      return
+    }
+
+    if (ws && ws.readyState !== WebSocket.CLOSED) {
       return
     }
 
@@ -176,6 +180,7 @@ export function useLiveCursors() {
     if (ws) {
       ws.onclose = null
       ws.close()
+      ws = null
     }
   })
 

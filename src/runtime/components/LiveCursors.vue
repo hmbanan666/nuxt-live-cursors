@@ -118,7 +118,12 @@
         {{ labels.you }}
       </p>
       <div :style="{ display: 'flex', alignItems: 'center', gap: '8px' }">
-        <slot name="profile-actions" :shuffle="shuffle">
+        <slot
+          name="profile-actions"
+          :shuffle="shuffle"
+          :cursors-hidden="cursorsHidden"
+          :toggle-cursors="() => cursorsHidden = !cursorsHidden"
+        >
           <button
             :style="{
               borderRadius: '8px',
