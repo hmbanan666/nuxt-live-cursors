@@ -158,6 +158,12 @@ The `<LiveCursors>` component provides slots for customization:
 </LiveCursors>
 ```
 
+## Live example
+
+See it in action on [kosarev.space](https://kosarev.space) — open in two tabs and watch the cursors.
+
+Read the [case study](https://kosarev.space/cases/kosarev-live-cursors) for implementation details.
+
 ## CSP
 
 If you use Content-Security-Policy, add WebSocket to `connect-src`:
